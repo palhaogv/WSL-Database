@@ -50,79 +50,146 @@ class Web_scraping:
         self.events_link = [line[0] for line in pd.read_fwf('events.txt', header=None).values.tolist()]
 
         
-        
-
         #for link in self.events_link:
         self.driver.get(self.events_link[0])
 
-        #Page stats
-        #Event stats
-        self.event_name = self.driver.find_element_by_class_name('event-title').text.split('\n')[0]
-        self.event_local = re.split(r'(\d+)', self.driver.find_element_by_class_name('event-meta-tour-info').text)[2]
-        self.event_turn = self.driver.find_element_by_class_name('event-meta-tour-info').text.split()[2][1:]
-        self.event_period = self.driver.find_element_by_class_name('event-schedule__date-range').text
-        self.heat_name = self.driver.find_elements_by_xpath('//*[@class="carousel-item-title-wrap"]')[len(self.driver.find_elements_by_xpath('//*[@class="carousel-item-title-wrap"]')) - 1].text + self.driver.find_element_by_class_name('new-heat-hd-name').text
-        self.avg_wave_score = re.split(r'(\d+\.\d+)',self.driver.find_element_by_class_name('new-heat-hd-status').text)[1]
-        print(f'The events name is: {self.event_name}')
-        print(f'The local name is: {self.event_local}')
-        print(f'The turn is: {self.event_turn}')
-        print(f'The events period is: {self.event_period}')
-        print(f'The events heat is: {self.heat_name}')
-        print(f'The events avg score is: {self.avg_wave_score}')
-        #Surfer 1 stats
-        self.surfer1 = self.driver.find_elements_by_xpath('//*[@class="athlete-name"]')
-        self.surfer1_nat = self.driver.find_elements_by_xpath('//*[@class="athlete-country-flag"]')
-        for i in range(0, len(self.surfer1)): print(f'Surfer {i+1}: {self.surfer1[i].text}')
-        for i in range(0, len(self.surfer1_nat)): print(f'Surfer {i+1} nationality: {self.surfer1_nat[i].get_attribute("title")}')
-        
-        '''self.surfer1_best_w1 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_best_w2 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_total = self.driver.find_elements_by_xpath('//a[@class="wave wave-total"]')[0].text
-        self.surfer1_w01 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w02 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w03 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w04 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w05 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w06 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w07 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w08 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w09 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w10 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w11 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w12 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w13 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w14 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        self.surfer1_w15 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
-        #Surfer 2 stats
-        self.surfer2 = self.driver.find_elements_by_xpath('//a[@class="athlete-name"]')[1].text
-        self.surfer2_nat = self.driver.find_elements_by_xpath('//a[@class="athlete-country-flag"]')[1].text
-        self.surfer2_best_w1 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_best_w2 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_total = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w01 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w02 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w03 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w04 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w05 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w06 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w07 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w08 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w09 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w10 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w11 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w12 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w13 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w14 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text
-        self.surfer2_w15 = self.driver.find_elements_by_xpath('//a[@class="score"]')[1].text        
-        print(f'The turn name is: {self.event_turn}')
-        print(f'The events end date is: {self.event_end_date}')
-        print(f'The events heat name is: {self.heat_name}')
-        print(f'The events avg score is: {self.avg_wave_score}')
-        print(f'The events surfer 1 is: {self.surfer1}')
-        print(f'The events surfer 1 nationality is: {self.surfer1_nat}')
-        print(f'The events surfer 2 is: {self.surfer2}')
-        print(f'The events surfer 2 nationality is: {self.surfer2_nat}')
-        print(f'Score number{x}: {i} in the class store' for x, i in self.driver.find_elements_by_xpath('//a[@class="score"]'))'''
+        while True:
+            #Gets all the waves scores on the page as list.
+            self.waves =  self.driver.find_elements_by_xpath('//*[@class="score"]')
+
+
+            #Gets the number of surfers and heats on the round, such as the avg surfers per heat (must be 2 or 3)
+            self.number_of_surfers = int(len(self.waves)/18)
+
+            #As the final round only has 1 heat, the find_element_by_class_name gets a 'WebDriver' element and not a list
+            try:
+                self.number_of_heats = len(self.driver.find_element_by_class_name('new-heat-hd-name'))
+            except:
+                self.number_of_heats = 1
+                
+            self.surfers_per_heat = int(self.number_of_surfers / self.number_of_heats)
+
+            #there's a count to deduct 1 stage and gets the round name for each round.
+            self.count = 0
+            #Gets the stats for each heat
+            self.heat_data = []
+            for g in range(0, self.number_of_heats):
+                #Gets the round's name
+                self.round = self.driver.find_elements_by_xpath('//*[@class="carousel-item-title-wrap"]')[len(self.driver.find_elements_by_xpath('//*[@class="carousel-item-title-wrap"]')) - (self.count + 1)].text
+                self.count += 1
+                #Page stats
+                #Event stats
+                self.event_turn = self.driver.find_element_by_class_name('event-meta-tour-info').text.split()[2][1:]
+                self.event_period = self.driver.find_element_by_class_name('event-schedule__date-range').text
+                self.event_name = self.driver.find_element_by_class_name('event-title').text.split('\n')[0]
+                self.event_local = re.split(r'(\d+)', self.driver.find_element_by_class_name('event-meta-tour-info').text)[2]
+                self.avg_wave_score = re.split(r'(\d+\.\d+)',self.driver.find_element_by_class_name('new-heat-hd-status').text)[1]
+                
+                #Heat's id for the database
+                self.heat_id = f'heat{g + 1}' + self.round + self.event_turn + self.event_period[len(self.event_period):len(self.event_period)-4]
+                
+
+                #Surfer stats
+                
+                self.surfer1 = self.driver.find_elements_by_xpath('//*[@class="athlete-name"]')[g*2].text
+                self.surfer1_nat = self.driver.find_elements_by_xpath('//*[@class="athlete-country-flag"]')[g*2].get_attribute('title')
+                
+                self.surfer1_best_w1 = self.waves[g*18+(1-1)].text
+                self.surfer1_best_w2 = self.waves[g*18+(2-1)].text
+                self.surfer1_total = self.waves[g*18+(3-1)].text
+                self.surfer1_w01 = self.waves[g*18+(4-1)].text
+                self.surfer1_w02 = self.waves[g*18+(5-1)].text
+                self.surfer1_w03 = self.waves[g*18+(6-1)].text
+                self.surfer1_w04 = self.waves[g*18+(7-1)].text
+                self.surfer1_w05 = self.waves[g*18+(8-1)].text
+                self.surfer1_w06 = self.waves[g*18+(9-1)].text
+                self.surfer1_w07 = self.waves[g*18+(10-1)].text
+                self.surfer1_w08 = self.waves[g*18+(11-1)].text
+                self.surfer1_w09 = self.waves[g*18+(12-1)].text
+                self.surfer1_w10 = self.waves[g*18+(13-1)].text
+                self.surfer1_w11 = self.waves[g*18+(14-1)].text
+                self.surfer1_w12 = self.waves[g*18+(15-1)].text
+                self.surfer1_w13 = self.waves[g*18+(16-1)].text
+                self.surfer1_w14 = self.waves[g*18+(17-1)].text
+                self.surfer1_w15 = self.waves[g*18+(18-1)].text
+
+                #Surfer 2 stats
+                self.surfer2 = self.driver.find_elements_by_xpath('//*[@class="athlete-name"]')[g*2+1].text
+                self.surfer2_nat = self.driver.find_elements_by_xpath('//*[@class="athlete-country-flag"]')[g*2+1].get_attribute('title')
+
+                self.surfer2_best_w1 = self.waves[g*18+(19-1)].text
+                self.surfer2_best_w2 = self.waves[g*18+(20-1)].text
+                self.surfer2_total = self.waves[g*18+(21-1)].text
+                self.surfer2_w01 = self.waves[g*18+(22-1)].text
+                self.surfer2_w02 = self.waves[g*18+(23-1)].text
+                self.surfer2_w03 = self.waves[g*18+(24-1)].text
+                self.surfer2_w04 = self.waves[g*18+(25-1)].text
+                self.surfer2_w05 = self.waves[g*18+(26-1)].text
+                self.surfer2_w06 = self.waves[g*18+(27-1)].text
+                self.surfer2_w07 = self.waves[g*18+(28-1)].text
+                self.surfer2_w08 = self.waves[g*18+(29-1)].text
+                self.surfer2_w09 = self.waves[g*18+(30-1)].text
+                self.surfer2_w10 = self.waves[g*18+(31-1)].text
+                self.surfer2_w11 = self.waves[g*18+(32-1)].text
+                self.surfer2_w12 = self.waves[g*18+(33-1)].text
+                self.surfer2_w13 = self.waves[g*18+(34-1)].text
+                self.surfer2_w14 = self.waves[g*18+(35-1)].text
+                self.surfer2_w15 = self.waves[g*18+(36-1)].text  
+                
+                #Inputing all variables into the heat_data list
+                self.heat_data.append(self.heat_id)
+                self.heat_data.append(self.event_name)
+                self.heat_data.append(self.event_local)
+                self.heat_data.append(self.event_turn)
+                self.heat_data.append(self.event_period)
+                self.heat_data.append(self.avg_wave_score)
+                self.heat_data.append(self.surfer1)
+                self.heat_data.append(self.surfer1_nat)
+                self.heat_data.append(self.surfer1_best_w1)
+                self.heat_data.append(self.surfer1_best_w2)
+                self.heat_data.append(self.surfer1_total)
+                self.heat_data.append(self.surfer1_w01)
+                self.heat_data.append(self.surfer1_w02)
+                self.heat_data.append(self.surfer1_w03)
+                self.heat_data.append(self.surfer1_w04)
+                self.heat_data.append(self.surfer1_w05)
+                self.heat_data.append(self.surfer1_w06)
+                self.heat_data.append(self.surfer1_w07)
+                self.heat_data.append(self.surfer1_w08)
+                self.heat_data.append(self.surfer1_w09)
+                self.heat_data.append(self.surfer1_w10)
+                self.heat_data.append(self.surfer1_w11)
+                self.heat_data.append(self.surfer1_w12)
+                self.heat_data.append(self.surfer1_w13)
+                self.heat_data.append(self.surfer1_w14)
+                self.heat_data.append(self.surfer1_w15)
+                self.heat_data.append(self.surfer2)
+                self.heat_data.append(self.surfer2_nat)
+                self.heat_data.append(self.surfer2_best_w1)
+                self.heat_data.append(self.surfer2_best_w2)
+                self.heat_data.append(self.surfer2_total)
+                self.heat_data.append(self.surfer2_w01)
+                self.heat_data.append(self.surfer2_w02)
+                self.heat_data.append(self.surfer2_w03)
+                self.heat_data.append(self.surfer2_w04)
+                self.heat_data.append(self.surfer2_w05)
+                self.heat_data.append(self.surfer2_w06)
+                self.heat_data.append(self.surfer2_w07)
+                self.heat_data.append(self.surfer2_w08)
+                self.heat_data.append(self.surfer2_w09)
+                self.heat_data.append(self.surfer2_w10)
+                self.heat_data.append(self.surfer2_w11)
+                self.heat_data.append(self.surfer2_w12)
+                self.heat_data.append(self.surfer2_w13)
+                self.heat_data.append(self.surfer2_w14)
+                self.heat_data.append(self.surfer2_w15)
+                print(self.heat_data)
+            
+            #self.driver.get(self.driver.find_element_by_xpath('//*[@class="previous"]').get_attribute('href'))
+            
+
+
+
 
 
 
