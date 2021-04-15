@@ -40,12 +40,70 @@ class Web_scraping:
         with open('events.txt', 'w') as f:
             for item in self.events_link_list:
                 f.write("%s\n" % item)
-
+        
         print('FINISHED')
+    
+    #Getting data inside which event
+    def event_stats(self):
+        #TXT file with all events link to list
+        self.events_link = [line[0] for line in pd.read_fwf('events.txt', header=None).values.tolist()]
 
+        
+        
 
+        for link in self.events_link:
+            self.driver.get(link)
 
-
+            #Page stats
+            #Event stats
+            self.event_name = self.driver.find_elements_by_xpath('//a[@class="event-title"]')[0].text
+            self.event_local = self.driver.find_elements_by_xpath('//a[@class="event-meta-tour-info"]')[0].text
+            self.event_turn = self.driver.find_elements_by_xpath('//a[@class="event-meta-tour-info"]')[1].text
+            self.event_end_date = self.driver.find_elements_by_xpath('//a[@class="local-time"]')[0].text
+            self.heat_name = self.driver.find_elements_by_xpath('//a[@class="carousel-item-title"]')[0].text + self.driver.find_elements_by_xpath('//a[@class="new-heat-hd-name"]')[0].text
+            self.avg_wave_score = self.driver.find_elements_by_xpath('//a[@class="new-heat-hd-status"]')[0].text
+            #Surfer 1 stats
+            self.surfer1 = self.driver.find_elements_by_xpath('//a[@class="athlete-name"]')[0].text
+            self.surfer1_nat = self.driver.find_elements_by_xpath('//a[@class="athlete-country-flag"]')[0].text
+            self.surfer1_best_w1 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_best_w2 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_total = self.driver.find_elements_by_xpath('//a[@class="wave wave-total"]')[0].text
+            self.surfer1_w01 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w02 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w03 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w04 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w05 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w06 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w07 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w08 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w09 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w10 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w11 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w12 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w13 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w14 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            self.surfer1_w15 = self.driver.find_elements_by_xpath('//a[@class="score"]')[0].text
+            #Surfer 2 stats
+            self.surfer2 = ''
+            self.surfer21_nat = ''
+            self.surfer2_best_w1 = ''
+            self.surfer2_best_w2 = ''
+            self.surfer2_total = ''
+            self.surfer2_w01 = ''
+            self.surfer2_w02 = ''
+            self.surfer2_w03 = ''
+            self.surfer2_w04 = ''
+            self.surfer2_w05 = ''
+            self.surfer2_w06 = ''
+            self.surfer2_w07 = ''
+            self.surfer2_w08 = ''
+            self.surfer2_w09 = ''
+            self.surfer2_w10 = ''
+            self.surfer2_w11 = ''
+            self.surfer2_w12 = ''
+            self.surfer2_w13 = ''
+            self.surfer2_w14 = ''
+            self.surfer2_w15 = ''
 
 
 
