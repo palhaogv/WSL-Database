@@ -8,11 +8,17 @@ import time
 from random import randint, random
 import pandas as pd
 import re
+from msedge.selenium_tools import EdgeOptions, Edge
 
 class Web_scraping:
     def __init__(self):
         '''Initialize the application'''
-        self.driver = webdriver.Edge('C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedgedriver.exe')
+        #As using the standard webdriver was giving warnings and messing up the terminal, I used the code below to show just what I want.
+        self.opt = EdgeOptions()
+        self.opt.add_experimental_option('excludeSwitches', ['enable-logging'])
+        self.opt.add_argument("--start-maximized")
+        self.opt.use_chromium = True
+        self.driver = Edge(executable_path=r"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedgedriver.exe", options=self.opt)
 
     def games_link(self):
         '''Create a list with all season event's link and then create another list with all event's link'''
@@ -53,20 +59,27 @@ class Web_scraping:
         #for link in self.events_link:
         self.driver.get(self.events_link[0])
 
-        while True:
-            #Gets all the waves scores on the page as list.
-            self.waves =  self.driver.find_elements_by_xpath('//*[@class="score"]')
+        #list of all heats
+        self.all_heats_lists = []
 
+        while True:
+            #Gets all the waves scores, athletes, nationalities and heats on the page as list.
+            self.waves =  self.driver.find_elements_by_xpath('//*[@class="score"]')
+            self.athletes = self.driver.find_elements_by_xpath('//*[@class="athlete-name"]')
+            self.nationalities = self.driver.find_elements_by_xpath('//*[@class="athlete-country-flag"]')
+            self.heat = self.driver.find_elements_by_xpath('//*[@class="new-heat-hd-name"]')
+
+            #Gets the round name
+            self.round = self.driver.find_elements_by_xpath('//*[@class="carousel-item is-selected"]')
+            if len(self.round) == 0:
+                self.round = self.driver.find_elements_by_xpath('//*[@class="carousel-item last is-selected"]')
 
             #Gets the number of surfers and heats on the round, such as the avg surfers per heat (must be 2 or 3)
             self.number_of_surfers = int(len(self.waves)/18)
 
             #As the final round only has 1 heat, the find_element_by_class_name gets a 'WebDriver' element and not a list
-            try:
-                self.number_of_heats = len(self.driver.find_element_by_class_name('new-heat-hd-name'))
-            except:
-                self.number_of_heats = 1
-                
+            self.number_of_heats = len(self.heat)
+
             self.surfers_per_heat = int(self.number_of_surfers / self.number_of_heats)
 
             #there's a count to deduct 1 stage and gets the round name for each round.
@@ -74,9 +87,6 @@ class Web_scraping:
             #Gets the stats for each heat
             self.heat_data = []
             for g in range(0, self.number_of_heats):
-                #Gets the round's name
-                self.round = self.driver.find_elements_by_xpath('//*[@class="carousel-item-title-wrap"]')[len(self.driver.find_elements_by_xpath('//*[@class="carousel-item-title-wrap"]')) - (self.count + 1)].text
-                self.count += 1
                 #Page stats
                 #Event stats
                 self.event_turn = self.driver.find_element_by_class_name('event-meta-tour-info').text.split()[2][1:]
@@ -86,13 +96,13 @@ class Web_scraping:
                 self.avg_wave_score = re.split(r'(\d+\.\d+)',self.driver.find_element_by_class_name('new-heat-hd-status').text)[1]
                 
                 #Heat's id for the database
-                self.heat_id = f'heat{g + 1}' + self.round + self.event_turn + self.event_period[len(self.event_period):len(self.event_period)-4]
+                self.heat_id = (f'heat{g + 1}' + self.round[0].text + self.event_turn + self.event_period[-4:]).lower()
                 
 
                 #Surfer stats
                 
-                self.surfer1 = self.driver.find_elements_by_xpath('//*[@class="athlete-name"]')[g*2].text
-                self.surfer1_nat = self.driver.find_elements_by_xpath('//*[@class="athlete-country-flag"]')[g*2].get_attribute('title')
+                self.surfer1 = self.athletes[g*2].text
+                self.surfer1_nat =self.nationalities[g*2].get_attribute('title')
                 
                 self.surfer1_best_w1 = self.waves[g*18+(1-1)].text
                 self.surfer1_best_w2 = self.waves[g*18+(2-1)].text
@@ -114,8 +124,8 @@ class Web_scraping:
                 self.surfer1_w15 = self.waves[g*18+(18-1)].text
 
                 #Surfer 2 stats
-                self.surfer2 = self.driver.find_elements_by_xpath('//*[@class="athlete-name"]')[g*2+1].text
-                self.surfer2_nat = self.driver.find_elements_by_xpath('//*[@class="athlete-country-flag"]')[g*2+1].get_attribute('title')
+                self.surfer2 = self.athletes[g*2+1].text
+                self.surfer2_nat =self.nationalities[g*2+1].get_attribute('title')
 
                 self.surfer2_best_w1 = self.waves[g*18+(19-1)].text
                 self.surfer2_best_w2 = self.waves[g*18+(20-1)].text
@@ -183,15 +193,20 @@ class Web_scraping:
                 self.heat_data.append(self.surfer2_w13)
                 self.heat_data.append(self.surfer2_w14)
                 self.heat_data.append(self.surfer2_w15)
-                print(self.heat_data)
+                self.all_heats_lists.append(self.heat_data.copy())
+                self.heat_data.clear()
             
-            #self.driver.get(self.driver.find_element_by_xpath('//*[@class="previous"]').get_attribute('href'))
+            #Click on the previous round botton
+            print(self.all_heats_lists)
+            try:
+                self.prev_round_bt = self.driver.find_element_by_xpath('//*[@class="flickity-button-icon"]').click()
+            except:
+                self.prev_round_bt = self.driver.find_element_by_xpath('//*[@class="flickity-button-icon"]')
+                self.driver.execute_script("arguments[0].scrollIntoView();", self.prev_round_bt)
+                time.sleep(.5)
+                self.prev_round_bt.click()
+            time.sleep(2.5)
             
-
-
-
-
-
 
 
 
