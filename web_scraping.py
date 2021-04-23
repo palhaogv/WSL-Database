@@ -9,6 +9,10 @@ from random import randint, random
 import pandas as pd
 import re
 from msedge.selenium_tools import EdgeOptions, Edge
+from tabulate import tabulate
+
+
+
 
 class Web_scraping:
     def __init__(self):
